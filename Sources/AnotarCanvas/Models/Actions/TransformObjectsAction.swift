@@ -8,6 +8,7 @@
 import Foundation
 
 /// Stores geometry state (position, size, rotation) for an object
+@MainActor
 public struct ObjectGeometryState {
     public let id: UUID
     public let position: CGPoint

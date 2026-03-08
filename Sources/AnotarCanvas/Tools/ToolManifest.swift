@@ -21,7 +21,7 @@ import SwiftUI
 
 /// Bundles a CanvasTool with the view and codable registrations for the object
 /// type it produces.
-public struct ToolManifest<Obj: CopyableCanvasObject> {
+public struct ToolManifest<Obj: CopyableCanvasObject>: @unchecked Sendable {
     public let tool: any CanvasTool
     public let discriminator: String
     public let interactiveView: @MainActor (Obj, Bool, CanvasViewModel) -> AnyView
@@ -32,7 +32,7 @@ public struct ToolManifest<Obj: CopyableCanvasObject> {
 
 /// View and codable registrations for an object type that has no dedicated tool
 /// (e.g. ImageObject, which is inserted via paste rather than a toolbar tool).
-public struct ObjectManifest<Obj: CopyableCanvasObject> {
+public struct ObjectManifest<Obj: CopyableCanvasObject>: @unchecked Sendable {
     public let discriminator: String
     public let interactiveView: @MainActor (Obj, Bool, CanvasViewModel) -> AnyView
     public let exportView: @MainActor (Obj) -> AnyView

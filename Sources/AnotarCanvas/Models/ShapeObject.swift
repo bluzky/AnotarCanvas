@@ -9,7 +9,7 @@ import SVGPath
 #endif
 
 @MainActor
-public struct ShapeObject: CanvasObject, TextContentObject, StrokableObject, FillableObject, CopyableCanvasObject {
+public struct ShapeObject: CanvasObject, TextContentObject, StrokableObject, FillableObject, CopyableCanvasObject, @preconcurrency Codable {
     // MARK: - CanvasObject
     public let id: UUID
     public var position: CGPoint

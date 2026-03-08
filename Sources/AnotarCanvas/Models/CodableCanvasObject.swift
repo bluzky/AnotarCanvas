@@ -66,6 +66,7 @@ public struct CodableCanvasObject: Codable {
     public let objectData: Data
 
     /// Extract from an AnyCanvasObject using the registry.
+    @MainActor
     public static func from(_ anyObject: AnyCanvasObject) -> CodableCanvasObject? {
         guard let disc = CodableObjectRegistry.discriminator(for: anyObject),
               let data = CodableObjectRegistry.encode(anyObject) else {
@@ -76,6 +77,7 @@ public struct CodableCanvasObject: Codable {
 
     /// Create a new AnyCanvasObject with a fresh ID, zIndex, and position offset.
     /// Returns nil if the discriminator is not registered.
+    @MainActor
     public func toAnyCanvasObject(newId: UUID, zIndex: Int, offset: CGPoint) -> AnyCanvasObject? {
         guard let decoded = CodableObjectRegistry.decode(discriminator: typeDiscriminator, data: objectData) else {
             return nil

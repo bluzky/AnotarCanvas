@@ -8,7 +8,7 @@ import Foundation
 /// A lightweight value type identifying which tool is active.
 /// Tool identities are declared as static constants in each tool file —
 /// this file is never modified when adding a new tool.
-public struct DrawingTool: Hashable {
+public struct DrawingTool: Hashable, Sendable {
     public let id: String
 
     public init(id: String) {

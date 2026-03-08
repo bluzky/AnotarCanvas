@@ -32,7 +32,7 @@ public enum ArrowHead: String, Codable, Hashable, CaseIterable {
 ///
 /// Conforms to TextContentObject to expose label as text content for unified text formatting.
 @MainActor
-public struct LineObject: CanvasObject, StrokableObject, TextContentObject, CopyableCanvasObject {
+public struct LineObject: CanvasObject, StrokableObject, TextContentObject, CopyableCanvasObject, @preconcurrency Codable {
     // MARK: - CanvasObject Properties
     public let id: UUID
     public var rotation: CGFloat = 0

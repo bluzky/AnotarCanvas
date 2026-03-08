@@ -8,7 +8,7 @@ import SwiftUI
 /// A freehand pencil stroke stored as a series of canvas-coordinate points.
 /// The path is rendered using Catmull-Rom spline smoothing for a natural look.
 @MainActor
-public struct PencilObject: CanvasObject, StrokableObject, CopyableCanvasObject {
+public struct PencilObject: CanvasObject, StrokableObject, CopyableCanvasObject, @preconcurrency Codable {
 
     // MARK: - CanvasObject Properties
 

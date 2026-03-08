@@ -17,6 +17,7 @@ import SwiftUI
 /// The `rebuilt()` helper is retained for the handful of internal sites that need
 /// to produce an updated wrapper from a locally mutated concrete copy — but the
 /// nonmutating-setter pattern has been removed to eliminate the silent-desync footgun.
+@MainActor
 public struct AnyCanvasObject: Identifiable {
     public let id: UUID
 
@@ -350,7 +351,7 @@ public struct AnyCanvasObject: Identifiable {
 // MARK: - Equatable
 
 extension AnyCanvasObject: Equatable {
-    public static func == (lhs: AnyCanvasObject, rhs: AnyCanvasObject) -> Bool {
+    nonisolated public static func == (lhs: AnyCanvasObject, rhs: AnyCanvasObject) -> Bool {
         // Version is unique per init, so this catches every concrete-type field change
         // without needing to enumerate them (strokeColor, arrowheads, imageData, etc.).
         lhs.id == rhs.id && lhs._version == rhs._version
@@ -360,7 +361,7 @@ extension AnyCanvasObject: Equatable {
 // MARK: - Hashable
 
 extension AnyCanvasObject: Hashable {
-    public func hash(into hasher: inout Hasher) {
+    nonisolated public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
 }

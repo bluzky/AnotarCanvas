@@ -9,7 +9,7 @@ import SwiftUI
 import AppKit
 
 @MainActor
-public struct TextObject: CanvasObject, TextContentObject, CopyableCanvasObject {
+public struct TextObject: CanvasObject, TextContentObject, CopyableCanvasObject, @preconcurrency Codable {
     // MARK: - CanvasObject Properties
     public let id: UUID
     public var position: CGPoint

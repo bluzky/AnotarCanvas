@@ -8,6 +8,7 @@
 import SwiftUI
 
 /// Represents the selection box around one or more selected objects
+@MainActor
 public struct SelectionBox {
     /// Combined bounding box of all selected objects
     public let bounds: CGRect

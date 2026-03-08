@@ -12,6 +12,7 @@ import Foundation
 ///
 /// Custom attributes are stored as string-keyed dictionaries, enabling complete
 /// extensibility - new tools can add arbitrary attributes without framework changes.
+@MainActor
 public protocol CustomizableObject {
     /// Apply custom attributes to this object.
     /// Objects should pattern-match on known string keys and update their properties.

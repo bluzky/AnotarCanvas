@@ -9,6 +9,7 @@ import Foundation
 
 /// Describes what capabilities are available for the current selection
 /// Used by UI to conditionally show/hide controls based on selected objects
+@MainActor
 public struct SelectionCapabilities {
     /// Set of capabilities supported by ALL selected objects
     public let capabilities: Set<ObjectCapability>

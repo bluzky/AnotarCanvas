@@ -10,7 +10,7 @@ import Foundation
 
 /// Capability identifier - what a tool or object supports
 /// Used for both tool capabilities (what a tool creates) and object capabilities (what an object supports for editing)
-public struct Capability: Hashable, ExpressibleByStringLiteral {
+public struct Capability: Hashable, Sendable, ExpressibleByStringLiteral {
     public let identifier: String
 
     public init(_ identifier: String) {

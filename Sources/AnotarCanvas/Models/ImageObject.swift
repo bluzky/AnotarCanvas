@@ -9,10 +9,10 @@ import AppKit
 /// Cache for decoded NSImages keyed by object UUID.
 /// imageData is immutable (let) on ImageObject — a new object with a new id is always
 /// created when the image changes — so the UUID key never goes stale.
-private let imageCache = NSCache<NSString, NSImage>()
+nonisolated(unsafe) private let imageCache = NSCache<NSString, NSImage>()
 
 @MainActor
-public struct ImageObject: CanvasObject, CopyableCanvasObject {
+public struct ImageObject: CanvasObject, CopyableCanvasObject, @preconcurrency Codable {
     // MARK: - CanvasObject Properties
     public let id: UUID
     public var position: CGPoint

@@ -9,6 +9,7 @@ import SwiftUI
 /// Each tool encapsulates its own preview rendering, gesture handling, and object rendering.
 /// A tool's identity is fully represented by its `toolType: DrawingTool` value;
 /// the registry keys directly on `toolType.id` for O(1) lookup.
+@MainActor
 public protocol CanvasTool {
     /// Tool name for debugging, logging, plugin identification
     var name: String { get }
