@@ -71,6 +71,11 @@ public class CanvasViewModel: ObservableObject {
     /// Undo/redo manager for canvas actions
     public var undoManager: UndoManager?
 
+    // MARK: - Canvas Appearance
+
+    /// Whether to show the grid background. Set to `false` for overlay/transparent usage.
+    @Published public var showGrid: Bool = true
+
     // MARK: - Unified Object Storage
 
     /// Primary storage for all canvas objects, sorted by zIndex

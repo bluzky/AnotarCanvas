@@ -62,7 +62,9 @@ public struct CanvasView: View {
         GeometryReader { geometry in
             ZStack {
                 // Infinite canvas background with dot grid
-                InfiniteGridView(viewport: viewModel.viewport)
+                if viewModel.showGrid {
+                    InfiniteGridView(viewport: viewModel.viewport)
+                }
 
                 // Canvas content with viewport transform
                 ZStack {
