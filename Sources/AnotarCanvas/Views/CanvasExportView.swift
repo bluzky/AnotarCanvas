@@ -83,7 +83,7 @@ struct ExportShapeObjectView: View {
                 .fill(object.fillColor.opacity(object.fillOpacity))
                 .frame(width: object.size.width, height: height)
             object.path(in: shapeRect)
-                .stroke(object.strokeColor, lineWidth: object.strokeWidth)
+                .stroke(object.strokeColor, style: object.swiftUIStrokeStyle)
                 .frame(width: object.size.width, height: height)
 
             if !object.text.isEmpty {

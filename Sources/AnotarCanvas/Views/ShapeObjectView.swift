@@ -21,7 +21,7 @@ struct ShapeObjectView: View {
                 .fill(object.fillColor.opacity(object.fillOpacity))
                 .frame(width: object.size.width, height: effectiveHeight)
             object.path(in: shapeRect)
-                .stroke(object.strokeColor, lineWidth: object.strokeWidth)
+                .stroke(object.strokeColor, style: object.swiftUIStrokeStyle)
                 .frame(width: object.size.width, height: effectiveHeight)
 
             // Text content (aligned inside shape)
