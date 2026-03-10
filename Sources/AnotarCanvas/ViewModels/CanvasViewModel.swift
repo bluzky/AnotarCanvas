@@ -289,6 +289,11 @@ public class CanvasViewModel: ObservableObject {
     /// Update attributes on a specific object using type-erased mutation
     public func updateObject(_ objectId: UUID, attributes: ObjectAttributes) {
         guard let index = objectIndex(withId: objectId) else { return }
+        // Allow toggling isLocked itself, but block all other changes on locked objects
+        if objects[index].isLocked {
+            let isLockToggle = attributes.count == 1 && attributes.keys.contains("isLocked")
+            guard isLockToggle else { return }
+        }
         objects[index] = objects[index].applying(attributes)
         isDirty = true
     }
@@ -449,6 +454,7 @@ public class CanvasViewModel: ObservableObject {
         update: (inout T) -> Void
     ) {
         guard let index = objectIndex(withId: id),
+              !objects[index].isLocked,
               var obj = objects[index].asType(T.self) else { return }
         update(&obj)
         objects[index] = AnyCanvasObject(obj)
@@ -458,8 +464,9 @@ public class CanvasViewModel: ObservableObject {
 
     public func selectObject(at point: CGPoint) -> UUID? {
         // Check objects in reverse z-order (highest zIndex first)
+        // Skip locked objects — they cannot be selected by clicking
         for obj in objects.reversed() {
-            if obj.contains(point) {
+            if !obj.isLocked && obj.contains(point) {
                 return obj.id
             }
         }
@@ -468,6 +475,7 @@ public class CanvasViewModel: ObservableObject {
 
     public func startEditing(objectId: UUID) {
         guard let index = objectIndex(withId: objectId) else { return }
+        guard !objects[index].isLocked else { return }
         guard objects[index].hasTextContent else { return }
 
         // Capture object state before editing for undo (with isEditing = false)
@@ -495,6 +503,7 @@ public class CanvasViewModel: ObservableObject {
 
     public func moveObject(id: UUID, by offset: CGSize) {
         guard let index = objectIndex(withId: id) else { return }
+        guard !objects[index].isLocked else { return }
         applyGeometry(at: index) {
             $0.position.x += offset.width
             $0.position.y += offset.height
@@ -504,18 +513,21 @@ public class CanvasViewModel: ObservableObject {
     /// Update rotation for an object
     public func updateObjectRotation(id: UUID, rotation: CGFloat) {
         guard let index = objectIndex(withId: id) else { return }
+        guard !objects[index].isLocked else { return }
         applyGeometry(at: index) { $0.rotation = rotation }
     }
 
     /// Update position and rotation for an object (used by group rotation)
     public func updateObjectPositionAndRotation(id: UUID, position: CGPoint, rotation: CGFloat) {
         guard let index = objectIndex(withId: id) else { return }
+        guard !objects[index].isLocked else { return }
         applyGeometry(at: index) { $0.position = position; $0.rotation = rotation }
     }
 
     /// Update position and size for an object (used by resize)
     public func updateObjectFrame(id: UUID, position: CGPoint, size: CGSize) {
         guard let index = objectIndex(withId: id) else { return }
+        guard !objects[index].isLocked else { return }
         applyGeometry(at: index) { $0.position = position; $0.size = size }
         // Lock text width and recalculate height to account for text wrapping
         updateObject(withId: id, as: TextObject.self) { textObj in
@@ -689,18 +701,18 @@ public class CanvasViewModel: ObservableObject {
         ])
     }
 
-    /// Find all objects within a marquee rectangle
+    /// Find all objects within a marquee rectangle (excludes locked objects)
     public func objectsInRect(_ rect: CGRect) -> Set<UUID> {
         var ids = Set<UUID>()
         for obj in objects {
-            if obj.intersectsRect(rect) {
+            if !obj.isLocked && obj.intersectsRect(rect) {
                 ids.insert(obj.id)
             }
         }
         return ids
     }
 
-    /// Move all selected objects by offset
+    /// Move all selected objects by offset (skips locked objects)
     public func moveSelectedObjects(by offset: CGSize) {
         for id in selectionState.selectedIds {
             moveObject(id: id, by: offset)
@@ -789,7 +801,10 @@ public class CanvasViewModel: ObservableObject {
     }
 
     public func deleteSelected() {
-        let idsToRemove = selectionState.selectedIds
+        // Exclude locked objects from deletion
+        let idsToRemove = selectionState.selectedIds.filter { id in
+            !(objects.first { $0.id == id }?.isLocked ?? false)
+        }
         guard !idsToRemove.isEmpty else { return }
 
         // Capture objects being deleted for undo
@@ -825,6 +840,7 @@ public class CanvasViewModel: ObservableObject {
             return idx1 < idx2
         }) {
             guard let index = objectIndex(withId: id) else { continue }
+            guard !objects[index].isLocked else { continue }
             objects[index] = objects[index].applying([ObjectAttributes.zIndex: maxZ + offset])
             offset += 1
         }
@@ -843,6 +859,7 @@ public class CanvasViewModel: ObservableObject {
             return idx1 < idx2
         }) {
             guard let index = objectIndex(withId: id) else { continue }
+            guard !objects[index].isLocked else { continue }
             objects[index] = objects[index].applying([ObjectAttributes.zIndex: minZ - selectedIds.count + offset])
             offset += 1
         }
@@ -857,6 +874,7 @@ public class CanvasViewModel: ObservableObject {
         }
         for id in sorted {
             guard let index = objectIndex(withId: id) else { continue }
+            guard !objects[index].isLocked else { continue }
             let currentZ = objects[index].zIndex
             objects[index] = objects[index].applying([ObjectAttributes.zIndex: currentZ + 1])
         }
@@ -871,6 +889,7 @@ public class CanvasViewModel: ObservableObject {
         }
         for id in sorted {
             guard let index = objectIndex(withId: id) else { continue }
+            guard !objects[index].isLocked else { continue }
             let currentZ = objects[index].zIndex
             objects[index] = objects[index].applying([ObjectAttributes.zIndex: max(0, currentZ - 1)])
         }

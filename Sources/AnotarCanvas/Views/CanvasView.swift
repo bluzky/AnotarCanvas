@@ -842,6 +842,7 @@ public struct CanvasView: View {
     /// - Returns: Tuple of (line object ID, whether point is specifically on the label area)
     private func hitTestLineLabel(at point: CGPoint) -> (UUID?, Bool) {
         for obj in viewModel.objects {
+            guard !obj.isLocked else { continue }
             guard let line = obj.asType(LineObject.self) else { continue }
             let result = line.hitTest(point, threshold: InteractionConstants.labelHitTestThreshold)
             if result == .label {
@@ -861,6 +862,7 @@ public struct CanvasView: View {
     /// Returns (objectId, controlPointIndex) or nil
     private func hitTestLineControlPoint(at point: CGPoint, threshold: CGFloat = InteractionConstants.hitTestThreshold) -> (UUID, Int)? {
         for obj in viewModel.selectedObjects {
+            guard !obj.isLocked else { continue }
             guard let line = obj.asType(LineObject.self) else { continue }
             if hypot(point.x - line.startPoint.x, point.y - line.startPoint.y) <= threshold {
                 return (line.id, 0)
@@ -875,6 +877,7 @@ public struct CanvasView: View {
     /// Check if a canvas point is near the body of any selected line object
     private func hitTestLineBody(at point: CGPoint, threshold: CGFloat = InteractionConstants.hitTestThreshold) -> Bool {
         for obj in viewModel.selectedObjects {
+            guard !obj.isLocked else { continue }
             guard let line = obj.asType(LineObject.self) else { continue }
             if line.contains(point) {
                 return true
