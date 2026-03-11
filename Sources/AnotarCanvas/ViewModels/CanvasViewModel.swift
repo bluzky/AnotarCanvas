@@ -608,6 +608,12 @@ public class CanvasViewModel: ObservableObject {
         return selectedObjects.allSatisfy { $0.usesControlPoints }
     }
 
+    /// Whether the current selection can be resized (all selected objects must be resizable)
+    public var isSelectionResizable: Bool {
+        guard selectionState.hasSelection else { return false }
+        return selectedObjects.allSatisfy { $0.isResizable }
+    }
+
     /// End all text editing without clearing selection
     public func endAllEditing() {
         // Collect IDs of text objects that are empty and should be removed

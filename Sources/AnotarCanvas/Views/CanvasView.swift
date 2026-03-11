@@ -177,7 +177,16 @@ public struct CanvasView: View {
                       let selectionBox = viewModel.selectionBox {
                 let canvasPoint = viewModel.viewport.screenToCanvas(screenLocation)
                 if let hitZone = selectionBox.hitTest(canvasPoint, scale: viewModel.viewport.scale) {
-                    cursorForHitZone(hitZone).set()
+                    let isResizeHandle: Bool
+                    switch hitZone {
+                    case .corner, .edge: isResizeHandle = true
+                    default: isResizeHandle = false
+                    }
+                    if !viewModel.isSelectionResizable && isResizeHandle {
+                        NSCursor.openHand.set()
+                    } else {
+                        cursorForHitZone(hitZone).set()
+                    }
                 } else {
                     NSCursor.arrow.set()
                 }
@@ -302,6 +311,13 @@ public struct CanvasView: View {
                    let hitZone = selectionBox.hitTest(canvasStart, scale: viewModel.viewport.scale) {
                     switch hitZone {
                     case .corner, .edge:
+                        // Skip resize for non-resizable selections — treat as move instead
+                        guard viewModel.isSelectionResizable else {
+                            activeHandleZone = .move
+                            draggedObjectId = viewModel.selectedIds.first
+                            lastDragLocation = canvasLocation
+                            break
+                        }
                         // Start resize
                         activeHandleZone = hitZone
                         resizeAnchor = anchorPoint(for: hitZone, in: selectionBox)
@@ -674,6 +690,7 @@ public struct CanvasView: View {
         let canvasLocation = viewModel.viewport.screenToCanvas(value.location)
 
         // If it's a click (minimal drag)
+        print("[CanvasView] onDragEnded distance=\(distance), selectedTool=\(viewModel.selectedTool.id)")
         if distance < 5 {
             handleClick(at: value.location)
         } else if viewModel.selectedTool != .select && viewModel.selectedTool != .hand {
@@ -755,6 +772,7 @@ public struct CanvasView: View {
         // Select and hand tool click logic runs inline; all other tools delegate to registry.
         if viewModel.selectedTool != .select && viewModel.selectedTool != .hand {
             if let tool = toolRegistry.tool(for: viewModel.selectedTool) {
+                print("[CanvasView] handleClick dispatching to tool: \(tool.name) at \(canvasLocation)")
                 tool.handleClick(at: canvasLocation, viewModel: viewModel, shiftHeld: shiftHeld)
             } else {
                 assertionFailure("No registered tool found for selected tool: \(viewModel.selectedTool)")

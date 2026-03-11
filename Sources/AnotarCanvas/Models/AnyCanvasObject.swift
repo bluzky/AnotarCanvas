@@ -51,6 +51,7 @@ public struct AnyCanvasObject: Identifiable {
 
     // Capability flags
     private let _usesControlPoints: Bool
+    private let _isResizable: Bool
     private let _supportsTextAlignment: Bool
 
     /// The ObjectIdentifier for the concrete CanvasObject type stored inside this wrapper.
@@ -67,6 +68,7 @@ public struct AnyCanvasObject: Identifiable {
         self._object = object
         self.underlyingTypeId = ObjectIdentifier(T.self)
         self._usesControlPoints = object.usesControlPoints
+        self._isResizable = object.isResizable
 
         // Check if object supports text alignment via protocol property
         self._supportsTextAlignment = (object as? any TextContentObject)?.supportsTextAlignment ?? false
@@ -148,6 +150,9 @@ public struct AnyCanvasObject: Identifiable {
 
     /// Whether this object uses control points instead of a selection box (e.g. lines)
     public var usesControlPoints: Bool { _usesControlPoints }
+
+    /// Whether this object can be resized (false hides resize handles and blocks resize drags)
+    public var isResizable: Bool { _isResizable }
 
     // MARK: - Type Casting
     // These always read from _object which is the immutable snapshot captured at init.

@@ -48,6 +48,10 @@ public protocol CanvasObject: Identifiable {
     /// Objects that return true (e.g. lines) show control-point handles rather than a bounding-box overlay.
     var usesControlPoints: Bool { get }
 
+    /// Whether this object can be resized by dragging corner/edge handles.
+    /// Defaults to true. Objects that should keep a fixed size (e.g. step numbers) return false.
+    var isResizable: Bool { get }
+
     /// Return true if this object visually intersects the given canvas-coordinate rectangle.
     /// Used for marquee (rubber-band) selection to avoid false positives from AABB expansion
     /// on non-rectangular objects such as diagonal lines.
@@ -59,6 +63,7 @@ public protocol CanvasObject: Identifiable {
 
 public extension CanvasObject {
     public var usesControlPoints: Bool { false }
+    public var isResizable: Bool { true }
 
     /// Default marquee intersection: the axis-aligned bounding box is sufficient for
     /// rectangular objects. Non-rectangular objects (e.g. LineObject) override this.

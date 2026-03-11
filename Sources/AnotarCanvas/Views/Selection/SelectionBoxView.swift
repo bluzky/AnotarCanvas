@@ -27,9 +27,11 @@ struct SelectionBoxView: View {
                 )
 
             // Corner resize handles only (small squares at corners)
-            ForEach(Corner.allCases, id: \.self) { corner in
-                ResizeHandle(size: handleSize)
-                    .position(relativePosition(for: selectionBox.cornerPosition(for: corner)))
+            if viewModel.isSelectionResizable {
+                ForEach(Corner.allCases, id: \.self) { corner in
+                    ResizeHandle(size: handleSize)
+                        .position(relativePosition(for: selectionBox.cornerPosition(for: corner)))
+                }
             }
         }
         .frame(
