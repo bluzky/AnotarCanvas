@@ -1,31 +1,29 @@
 //
-//  PencilObjectView.swift
+//  HighlightObjectView.swift
 //  AnotarCanvas
 //
 
 import SwiftUI
 
-struct PencilObjectView: View {
-    let object: PencilObject
+struct HighlightObjectView: View {
+    let object: HighlightObject
     let isSelected: Bool
     @ObservedObject var viewModel: CanvasViewModel
 
     var body: some View {
         let bbox = object.boundingBox()
         let pad = object.strokeWidth / 2
-        // Frame must include stroke overhang so SwiftUI doesn't shift the content
         let frameSize = CGSize(
             width: max(object.size.width + object.strokeWidth, object.strokeWidth),
             height: max(object.size.height + object.strokeWidth, object.strokeWidth)
         )
 
         ZStack {
-            // Render path in local coordinates, offset by pad so stroke fits in frame
             object.localSmoothPath()
                 .offsetBy(dx: pad, dy: pad)
                 .stroke(
-                    object.strokeColor,
-                    style: object.swiftUIStrokeStyle
+                    object.strokeColor.opacity(HighlightTool.strokeOpacity),
+                    style: StrokeStyle(lineWidth: object.strokeWidth, lineCap: .round, lineJoin: .round)
                 )
                 .frame(width: frameSize.width, height: frameSize.height)
 
@@ -45,8 +43,8 @@ struct PencilObjectView: View {
 
 // MARK: - Export View
 
-struct ExportPencilObjectView: View {
-    let object: PencilObject
+struct ExportHighlightObjectView: View {
+    let object: HighlightObject
 
     var body: some View {
         let bbox = object.boundingBox()
@@ -58,8 +56,8 @@ struct ExportPencilObjectView: View {
         object.localSmoothPath()
             .offsetBy(dx: pad, dy: pad)
             .stroke(
-                object.strokeColor,
-                style: object.swiftUIStrokeStyle
+                object.strokeColor.opacity(HighlightTool.strokeOpacity),
+                style: StrokeStyle(lineWidth: object.strokeWidth, lineCap: .round, lineJoin: .round)
             )
             .frame(width: frameSize.width, height: frameSize.height)
             .rotationEffect(.radians(object.rotation))
