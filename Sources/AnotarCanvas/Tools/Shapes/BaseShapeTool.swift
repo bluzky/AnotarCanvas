@@ -124,10 +124,12 @@ open class ShapeTool: CanvasTool {
         let textColor = attrs["textColor"] as? Color ?? .black
         let fontSize = attrs["fontSize"] as? CGFloat ?? 16.0
         let fontFamily = attrs["fontFamily"] as? String ?? "System"
+        let hAlign = attrs[ObjectAttributes.horizontalTextAlignment] as? HorizontalTextAlignment ?? .leading
         let textAttrs = TextAttributes(
             fontFamily: fontFamily,
             fontSize: fontSize,
-            textColor: CodableColor(textColor)
+            textColor: CodableColor(textColor),
+            horizontalAlignment: hAlign
         )
 
         // Use memberwise initializer to set stroke and fill independently

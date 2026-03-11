@@ -866,6 +866,15 @@ public class CanvasViewModel: ObservableObject {
         sortObjectsByZIndex()
     }
 
+    /// Move a specific object to the lowest z-index without affecting the current selection.
+    public func sendToBack(id: UUID) {
+        guard let index = objectIndex(withId: id) else { return }
+        guard !objects[index].isLocked else { return }
+        let minZ = objects.map { $0.zIndex }.min() ?? 0
+        objects[index] = objects[index].applying([ObjectAttributes.zIndex: minZ - 1])
+        sortObjectsByZIndex()
+    }
+
     /// Increase z-index of selected objects by 1 (bring one layer forward)
     public func bringForward() {
         guard !selectedIds.isEmpty else { return }
