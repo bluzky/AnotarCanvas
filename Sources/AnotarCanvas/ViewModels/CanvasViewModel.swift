@@ -168,6 +168,9 @@ public class CanvasViewModel: ObservableObject {
 
     @Published public var viewport = ViewportState()
 
+    /// When true, pan and zoom gestures are ignored.
+    @Published public var viewportLocked: Bool = false
+
     // MARK: - File State
 
     /// URL of the currently open file (nil = untitled/new document)
@@ -1035,11 +1038,13 @@ public class CanvasViewModel: ObservableObject {
 
     /// Pan the viewport by a delta
     public func panViewport(by delta: CGSize) {
+        guard !viewportLocked else { return }
         viewport.pan(by: delta)
     }
 
     /// Zoom the viewport by a factor around a point
     public func zoomViewport(by factor: CGFloat, around anchor: CGPoint) {
+        guard !viewportLocked else { return }
         viewport.zoom(by: factor, around: anchor)
     }
 
