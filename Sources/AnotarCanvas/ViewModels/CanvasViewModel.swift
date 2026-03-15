@@ -134,6 +134,20 @@ public class CanvasViewModel: ObservableObject {
     @Published public var activeTextSize: CGFloat = 16
     @Published public var activeColor: Color = .black
 
+    // MARK: - Background Image (for tools that sample the source image)
+
+    /// The background/source image that tools like Pixelate can sample from.
+    /// Set by the application layer; not published (no UI binding needed).
+    public var backgroundImage: CGImage?
+
+    /// The origin of the canvas within the background image, in image pixel coordinates.
+    /// Canvas point (0,0) maps to this pixel in the background image.
+    public var backgroundImageOrigin: CGPoint = .zero
+
+    /// Scale factor: image pixels per canvas point. Set by the application layer
+    /// alongside backgroundImage so tools don't need to guess from NSScreen.
+    public var backgroundImageScale: CGFloat = 2.0
+
     // MARK: - Tool Attribute State
 
     /// Current tool attributes — set by the application layer, read by tools.
